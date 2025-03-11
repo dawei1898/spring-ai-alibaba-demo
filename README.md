@@ -1,4 +1,4 @@
-# spring-ai-alibaba-demo
+## spring-ai-alibaba-demo
 
 使用 spring-ai-alibaba 框架对接 DeepSeek  DashScope(通义千问) 等大模型,提供了简易的对话页面.
 ![img.png](img.png)
