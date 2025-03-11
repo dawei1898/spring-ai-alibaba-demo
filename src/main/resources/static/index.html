@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>spring-ai test</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="js/eventsource.min.js"></script>
+</head>
+
+<body>
+<div id="app" style="width: 700px; margin-left: 50px">
+    <h3>spring-ai-alibaba 测试</h3>
+    <div class="input">
+        <label>
+            <input  id= "input-text" type="text"    name="msg" value="" style="width: 300px; height: 30px">
+            <button id="send-button">发送(qwen)</button>
+            <button id="send-button-v3">发送(deepseek-v3)</button>
+            <button id="send-button-r1">发送(deepseek-r1)</button>
+        </label>
+
+    </div>
+
+    <p></p>
+    <p></p>
+    <div id="display-question">
+
+    </div>
+
+    <p></p>
+    <p></p>
+    <div id="display-reasoner">
+
+    </div>
+
+    <p></p>
+    <p></p>
+    <div id="display-answer">
+
+    </div>
+
+</div>
+
+
+</body>
+
+<script type="module">
+
+    let sse = null
+    let messages = ''
+    let reasoningMessages = ''
+    // 点击发送
+    async function  send() {
+        const inputTextElement = document.getElementById('input-text');
+        const inputTxt = inputTextElement.value;
+        console.log('send: ', inputTxt)
+        if (!inputTxt) {
+            return
+        }
+        // 清空输入框
+        inputTextElement.value = null
+
+        displayQuestionMessage(inputTxt)
+        displayAnswerMessage('')
+
+        try {
+            const response = await axios.get(`/ai/chat?message=${inputTxt}`);
+            console.log(response);
+            displayAnswerMessage(response.data.content)
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
+    async function sendStreamV3(){
+        await sendStream("deepseek-v3")
+    }
+
+    async function sendStreamR1(){
+        await sendStream("deepseek-r1")
+    }
+
+    // 点击发送(流式)
+    async function  sendStream(model) {
+        const inputTextElement = document.getElementById('input-text');
+        const inputTxt = inputTextElement.value;
+        console.log('send: ', inputTxt)
+        if (!inputTxt) {
+            return
+        }
+        // 清空输入框
+        inputTextElement.value = null
+
+        displayQuestionMessage(inputTxt)
+        displayAnswerMessage('')
+        displayReasonerMessage('')
+
+        // 建立连接
+        const eventSource = new EventSourcePolyfill(`/ai/chat/stream?model=${model}&message=${inputTxt}`);
+        console.log('new EventSource')
+
+        // 开始建立连接
+        eventSource.onopen = function (event) {
+            console.log('建立连接')
+            sse = event.target;
+        }
+
+        // 监听服务端发来的消息
+        eventSource.onmessage = function (event) {
+            handleMessage(event)
+        }
+    }
+
+    /**
+     * 处理消息
+     * @param event
+     */
+    function handleMessage(event) {
+        console.log(`event: ${JSON.stringify(event)}`)
+        const data = JSON.parse(event.data)
+        // [DONE]
+        if ('[DONE]' === data.content) {
+            console.log("消息结束了!!!")
+            messages = ''
+            if (sse) {
+                sse.close()
+            }
+            return
+        }
+        // 思考
+        if (data.reasoningContent) {
+            reasoningMessages += data.reasoningContent
+            displayReasonerMessage(reasoningMessages)
+        }
+        // 回答
+        if (data.content) {
+            messages += data.content
+            displayAnswerMessage(messages)
+        }
+    }
+
+
+    /**
+     *  展示提问信息
+     */
+    function displayQuestionMessage(msg) {
+        // 展示消息
+        const displayQuestionElement = document.getElementById('display-question')
+        displayQuestionElement.innerHTML = '提问: ' + msg;
+    }
+
+    /**
+     *  展示思考信息
+     */
+    function displayReasonerMessage(msg) {
+        // 展示消息
+        if (msg) {
+            msg = '思考: ' + msg;
+        }
+        const displayReasonerElement = document.getElementById('display-reasoner')
+        displayReasonerElement.innerHTML = msg;
+    }
+
+    /**
+     *  展示回答信息
+     */
+    function displayAnswerMessage(msg) {
+        // 展示消息
+        if (msg) {
+            msg = '回答: ' + msg;
+        }
+        const displayMsgElement = document.getElementById('display-answer')
+        displayMsgElement.innerHTML = msg;
+    }
+
+
+    // 绑定按钮事件
+    document.getElementById('send-button').addEventListener('click', send);
+    document.getElementById('send-button-v3').addEventListener('click', sendStreamV3);
+    document.getElementById('send-button-r1').addEventListener('click', sendStreamR1);
+
+</script>
+
+<style>
+
+</style>
+</html>

@@ -1,0 +1,15 @@
+server:
+  port: 7010
+
+spring:
+  application:
+    name: spring-ai-demo
+  # 静态资源
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+ai:
+  dashscope-api-key:
+
+
