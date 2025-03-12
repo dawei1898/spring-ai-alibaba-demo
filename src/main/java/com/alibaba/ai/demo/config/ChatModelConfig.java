@@ -49,7 +49,6 @@ public class ChatModelConfig {
                 你是一个博学的智能聊天助手，请根据用户提问回答。
                 请讲中文。
                 """;
-
         return ChatClient.builder(dashScopeChatModel).defaultSystem(sysPrompt).build();
     }
 

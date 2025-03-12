@@ -85,12 +85,19 @@ public class ChatService {
                     }
 
                     // 结束
-                    if (StringUtils.isEmpty(text)
+                    /*if (StringUtils.isEmpty(text)
                             && "STOP".equals(r.getResult().getMetadata().getFinishReason())) {
                         map.put("content", "[DONE]");
-                    }
+                    }*/
                     log.info("map: {}", JSON.toJSONString(map));
                     return Flux.just(map);
+                })
+                // 增加结束标识
+                .concatWith(Flux.just(Map.of("content", "[DONE]")))
+                // 异常处理后, 也增加结束标识
+                .onErrorResume(e -> {
+                    log.error("chatStream error:", e);
+                    return Flux.just(Map.of("content", "[DONE]"));
                 });
     }
 

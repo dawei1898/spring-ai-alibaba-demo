@@ -1,10 +1,10 @@
-package com.alibaba.ai.demo.springaialibabademo;
+package com.alibaba.ai.demo.test;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringAiAlibabaDemoApplicationTests {
+class SpringAiAlibabaDemoAppTest {
 
     @Test
     void contextLoads() {
