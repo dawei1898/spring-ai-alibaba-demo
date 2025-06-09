@@ -1,11 +1,17 @@
 package com.alibaba.ai.demo.config;
 
 
+import com.alibaba.cloud.ai.memory.jdbc.MysqlChatMemoryRepository;
 import lombok.Data;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * 聊天模型配置
@@ -23,6 +29,15 @@ public class ChatModelConfig {
     public static final String DEEPSEEK_V3_MODEL = "deepseek-v3";
     public static final String DEEPSEEK_R1_MODEL = "deepseek-r1";
 
+    @Value("${spring.ai.chat.memory.repository.jdbc.mysql.jdbc-url}")
+    private String mysqlJdbcUrl;
+    @Value("${spring.ai.chat.memory.repository.jdbc.mysql.username}")
+    private String mysqlUsername;
+    @Value("${spring.ai.chat.memory.repository.jdbc.mysql.password}")
+    private String mysqlPassword;
+    @Value("${spring.ai.chat.memory.repository.jdbc.mysql.driver-class-name}")
+    private String mysqlDriverClassName;
+
     /**
      * 通义千问模型
      */
@@ -30,6 +45,36 @@ public class ChatModelConfig {
     public ChatClient chatClient(ChatClient.Builder builder) {
         return builder.build();
     }
+
+    @Bean
+    public ChatClient chatClient2(ChatClient.Builder builder, MysqlChatMemoryRepository mysqlChatMemoryRepository) {
+        // 基于 mysql 的记忆存储
+        MessageWindowChatMemory messageWindowChatMemory = MessageWindowChatMemory
+                .builder()
+                .chatMemoryRepository(mysqlChatMemoryRepository)
+                .maxMessages(10)
+                .build();
+
+        MessageChatMemoryAdvisor messageChatMemoryAdvisor = MessageChatMemoryAdvisor
+                .builder(messageWindowChatMemory)
+                .build();
+
+        return builder.defaultAdvisors(messageChatMemoryAdvisor).build();
+    }
+
+    //@Bean
+    public MysqlChatMemoryRepository mysqlChatMemoryRepository() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(mysqlDriverClassName);
+        dataSource.setUrl(mysqlJdbcUrl);
+        dataSource.setUsername(mysqlUsername);
+        dataSource.setPassword(mysqlPassword);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return MysqlChatMemoryRepository.mysqlBuilder()
+                .jdbcTemplate(jdbcTemplate)
+                .build();
+    }
+
 
     /**
      * 通义千问模型
