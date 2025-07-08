@@ -1,11 +1,16 @@
 package com.alibaba.ai.demo.config;
 
 
+import com.alibaba.cloud.ai.advisor.DocumentRetrievalAdvisor;
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
+import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetriever;
+import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetrieverOptions;
 import com.alibaba.cloud.ai.memory.jdbc.MysqlChatMemoryRepository;
 import lombok.Data;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +64,16 @@ public class ChatModelConfig {
                 .builder(messageWindowChatMemory)
                 .build();
 
-        return builder.defaultAdvisors(messageChatMemoryAdvisor).build();
+        // 添加阿里云百炼知识库
+        DashScopeDocumentRetrieverOptions documentRetrieverOptions = DashScopeDocumentRetrieverOptions
+                .builder()
+                .withIndexName("百炼手机产品介绍")
+                .build();
+        DashScopeApi dashScopeApi = DashScopeApi.builder().apiKey(dashscopeApiKey).build();
+        DocumentRetriever retriever = new DashScopeDocumentRetriever(dashScopeApi, documentRetrieverOptions);
+        DocumentRetrievalAdvisor documentRetrievalAdvisor = new DocumentRetrievalAdvisor(retriever);
+
+        return builder.defaultAdvisors(messageChatMemoryAdvisor, documentRetrievalAdvisor).build();
     }
 
     //@Bean
