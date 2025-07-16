@@ -1,0 +1,33 @@
+server:
+  port: 7020
+
+
+spring:
+  application:
+    name: mcp-server-app
+  main:
+    banner-mode: off
+  ai:
+    mcp:
+      server:
+        name: webmvc-mcp-server
+        version: 1.0.0
+        type: ASYNC
+        instructions: "This server provides weather information tools and resources"
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp
+        capabilities:
+          tool: true
+          resource: true
+          prompt: true
+          completion: true
+
+
+# 调试日志
+logging:
+  level:
+    io:
+      modelcontextprotocol:
+        client: DEBUG
+        spec: DEBUG
+        server: DEBUG

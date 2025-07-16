@@ -9,6 +9,7 @@ import com.alibaba.cloud.ai.memory.jdbc.MysqlChatMemoryRepository;
 import lombok.Data;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +54,13 @@ public class ChatModelConfig {
 
     @Bean
     public ChatClient chatClient2(ChatClient.Builder builder, MysqlChatMemoryRepository mysqlChatMemoryRepository) {
+        // 日志记录
+        SimpleLoggerAdvisor customLoggerAdvisor = new SimpleLoggerAdvisor(
+                request -> "[chat request]: " + request.prompt(),
+                response -> "[chat response]: " + response.getResult(),
+                0
+        );
+
         // 基于 mysql 的记忆存储
         MessageWindowChatMemory messageWindowChatMemory = MessageWindowChatMemory
                 .builder()
@@ -73,7 +81,11 @@ public class ChatModelConfig {
         DocumentRetriever retriever = new DashScopeDocumentRetriever(dashScopeApi, documentRetrieverOptions);
         DocumentRetrievalAdvisor documentRetrievalAdvisor = new DocumentRetrievalAdvisor(retriever);
 
-        return builder.defaultAdvisors(messageChatMemoryAdvisor, documentRetrievalAdvisor).build();
+        return builder.defaultAdvisors(
+                customLoggerAdvisor,
+                messageChatMemoryAdvisor,
+                documentRetrievalAdvisor
+        ).build();
     }
 
     //@Bean
