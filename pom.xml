@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.4.8</version>
         <relativePath/>
     </parent>
 
@@ -17,8 +17,8 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
-        <spring-ai.version>1.0.0</spring-ai.version>
+        <spring-ai-alibaba.version>1.0.0.3</spring-ai-alibaba.version>
+        <spring-ai.version>1.0.1</spring-ai.version>
     </properties>
 
     <dependencyManagement>
@@ -26,7 +26,7 @@
             <dependency>
                 <groupId>com.alibaba.cloud.ai</groupId>
                 <artifactId>spring-ai-alibaba-bom</artifactId>
-                <version>1.0.0.2</version>
+                <version>1.0.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -128,6 +128,7 @@
             <version>${spring-ai.version}</version>
         </dependency>-->
 
+
         <!-- document-reader -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -143,7 +144,7 @@
         <!-- javacv -->
         <dependency>
             <groupId>org.bytedeco</groupId>
-            <artifactId>javacv-platform</artifactId>
+            <artifactId>javacv</artifactId>
             <version>1.5.9</version>
         </dependency>
     </dependencies>
