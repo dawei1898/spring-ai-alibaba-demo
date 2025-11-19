@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.8</version>
+        <version>3.5.0</version>
         <relativePath/>
     </parent>
 
@@ -17,8 +17,8 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-ai-alibaba.version>1.0.0.3</spring-ai-alibaba.version>
-        <spring-ai.version>1.0.1</spring-ai.version>
+        <spring-ai-alibaba.version>1.1.0.0-M5</spring-ai-alibaba.version>
+        <spring-ai.version>1.1.0-M4</spring-ai.version>
     </properties>
 
     <dependencyManagement>
@@ -26,7 +26,7 @@
             <dependency>
                 <groupId>com.alibaba.cloud.ai</groupId>
                 <artifactId>spring-ai-alibaba-bom</artifactId>
-                <version>1.0.0.3</version>
+                <version>1.1.0.0-M5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -82,31 +82,40 @@
         </dependency>
 
 
-        <!-- spring-ai-alibaba -->
+
+        <!-- spring-ai-alibaba-agent -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-agent-framework</artifactId>
+            <version>${spring-ai-alibaba.version}</version>
+        </dependency>
+        <!-- spring-ai-alibaba-dashscope -->
+        <!-- Assume you are going to use DashScope Model. Refer to docs for how to choose model.-->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-        </dependency>
-        <!--<dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
             <version>${spring-ai-alibaba.version}</version>
-        </dependency>-->
+        </dependency>
+
+
 
         <!-- memory -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-memory</artifactId>
+            <version>${spring-ai-alibaba.version}</version>
         </dependency>
 
         <!-- tool-call -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-tool-calling-time</artifactId>
+            <version>${spring-ai-alibaba.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-tool-calling-weather</artifactId>
+            <version>${spring-ai-alibaba.version}</version>
         </dependency>
 
         <!-- vector-store -->
@@ -132,6 +141,7 @@
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-graph-core</artifactId>
+            <version>${spring-ai-alibaba.version}</version>
         </dependency>
 
         <!-- document-reader -->

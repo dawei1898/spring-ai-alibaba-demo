@@ -5,7 +5,7 @@ import com.alibaba.cloud.ai.graph.NodeOutput;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
-import com.alibaba.cloud.ai.graph.streaming.StreamingChatGenerator;
+import com.alibaba.cloud.ai.graph.async.internal.reactive.GeneratorSubscriber;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -51,7 +51,7 @@ public class AsyncExpanderNode implements NodeAction {
                 .stream()
                 .chatResponse();
 
-        AsyncGenerator<? extends NodeOutput> generator = StreamingChatGenerator.builder()
+        AsyncGenerator<? extends NodeOutput> generator = GeneratorSubscriber.builder()
                 .startingNode("expanderllmstream")
                 .startingState(state)
                 .mapResult(response -> {

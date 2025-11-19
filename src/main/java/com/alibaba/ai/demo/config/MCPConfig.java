@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import lombok.Data;
-import org.springframework.ai.mcp.client.autoconfigure.NamedClientMcpTransport;
+import org.springframework.ai.mcp.client.common.autoconfigure.NamedClientMcpTransport;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ public class MCPConfig {
         McpClientTransport transport = HttpClientSseClientTransport
                 .builder("https://mcp.amap.com")
                 .sseEndpoint("/sse?key=" + amapKey)
-                .objectMapper(new ObjectMapper())
+                //.objectMapper(new ObjectMapper())
                 .build();
 
         return Collections.singletonList(new NamedClientMcpTransport("amap", transport));
