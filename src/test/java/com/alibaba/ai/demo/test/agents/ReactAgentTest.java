@@ -1,15 +1,20 @@
 package com.alibaba.ai.demo.test.agents;
 
+import com.alibaba.ai.demo.interceptor.ToolErrorInterceptor;
+import com.alibaba.ai.demo.tools.SearchTool;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import com.alibaba.cloud.ai.graph.NodeOutput;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
+import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -135,5 +140,32 @@ public class ReactAgentTest {
 
 
 
+    /**
+     * 测试 ReactAgent 调用工具
+     */
+    @Test
+    public void testTools01() throws Exception {
+        ToolCallback searchTool = FunctionToolCallback
+                .builder("search", new SearchTool())
+                .description("搜索工具")
+                .inputType(Map.class)
+                .build();
+
+        ReactAgent reactAgent = ReactAgent.builder()
+                .name("search-agent")
+                .model(chatModel)
+                .systemPrompt("你是一个专业的技术助手。请准确、简洁地回答问题。")
+                .tools(searchTool)
+                .interceptors(new ToolErrorInterceptor())
+                .build();
+
+        String message = "查询深圳天气并推荐活动";
+        //String message = "深圳今天的天气怎么样？";
+        System.out.println("【提问】 = " + message);
+
+        AssistantMessage assistantMessage = reactAgent.call(message);
+        String content = assistantMessage.getText();
+        System.out.println("【回答】 = " + content);
+    }
 
 }
