@@ -1,6 +1,8 @@
 package com.alibaba.ai.demo.test.agents;
 
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import com.alibaba.cloud.ai.graph.NodeOutput;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
@@ -8,6 +10,7 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Flux;
@@ -26,13 +29,49 @@ import java.util.concurrent.TimeUnit;
 @ActiveProfiles("local")
 public class ReactAgentTest {
 
+    public static final String MODEL_NAME = "qwen-plus";
+
+    @Value("${spring.ai.dashscope.api-key}")
+    private String dashscopeApiKey;
+
     @Resource
     private DashScopeChatModel chatModel;
 
     @Resource
     private ReactAgent reactAgent;
 
+    /**
+     * 测试配置模型
+     */
+    @Test
+    public void testChatModel() throws Exception {
 
+        DashScopeApi dashScopeApi = DashScopeApi
+                .builder().apiKey(dashscopeApiKey).build();
+        DashScopeChatOptions defaultOptions = DashScopeChatOptions
+                .builder().withModel(MODEL_NAME).build();
+        DashScopeChatModel dashScopeChatModel = DashScopeChatModel.builder()
+                .dashScopeApi(dashScopeApi)
+                .defaultOptions(defaultOptions)
+                .build();
+
+        ReactAgent reactAgent = ReactAgent.builder()
+                .name("react-agent-01")
+                .model(dashScopeChatModel)
+                .build();
+
+        String message = "请用中文回答，你叫什么名字？";
+        System.out.println("【提问】 = " + message);
+
+        AssistantMessage resp = reactAgent.call(message);
+        String text = resp.getText();
+        System.out.println("【回答】 = " + text);
+    }
+
+
+    /**
+     * 测试 ReactAgent 同步对话
+     */
     @Test
     public void testReactAgent01() throws Exception {
         String message = "请用中文回答，你叫什么名字？";
@@ -49,6 +88,10 @@ public class ReactAgentTest {
 
     }
 
+
+    /**
+     * 测试 ReactAgent 流式对话
+     */
     @Test
     public void testReactAgentStream01() throws Exception {
         String message = "请用中文回答，你叫什么名字？";
