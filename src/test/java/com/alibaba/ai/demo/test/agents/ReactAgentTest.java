@@ -29,6 +29,9 @@ public class ReactAgentTest {
     @Resource
     private DashScopeChatModel chatModel;
 
+    @Resource
+    private ReactAgent reactAgent;
+
 
     @Test
     public void testReactAgent01() throws Exception {
@@ -51,11 +54,10 @@ public class ReactAgentTest {
         String message = "请用中文回答，你叫什么名字？";
         System.out.println("【提问】 = " + message);
 
-        ReactAgent reactAgent = ReactAgent.builder()
+        /*ReactAgent reactAgent = ReactAgent.builder()
                 .name("react-agent-01")
                 .model(chatModel)
-                .build();
-
+                .build();*/
 
         Flux<NodeOutput> flux = reactAgent.stream(message);
 
@@ -83,7 +85,6 @@ public class ReactAgentTest {
                     e.printStackTrace();
                 }
             }
-
         });
 
         TimeUnit.SECONDS.sleep(10);
