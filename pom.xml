@@ -90,12 +90,17 @@
             <version>${spring-ai-alibaba.version}</version>
         </dependency>
         <!-- spring-ai-alibaba-dashscope -->
-        <!-- Assume you are going to use DashScope Model. Refer to docs for how to choose model.-->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
             <version>${spring-ai-alibaba.version}</version>
         </dependency>
+        <!-- spring-ai-alibaba-studio -->
+        <!--<dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-studio</artifactId>
+            <version>1.1.0.0-M5</version>
+        </dependency>-->
 
 
 
@@ -182,8 +187,8 @@
 
     <repositories>
         <repository>
-            <id>aliyun-public</id>
-            <url>https://maven.aliyun.com/repository/public</url>
+            <id>aliyun-center</id>
+            <url>https://maven.aliyun.com/repository/center</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
