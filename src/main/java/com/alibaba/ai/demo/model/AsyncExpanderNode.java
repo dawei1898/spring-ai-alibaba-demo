@@ -51,14 +51,15 @@ public class AsyncExpanderNode implements NodeAction {
                 .stream()
                 .chatResponse();
 
-        AsyncGenerator<? extends NodeOutput> generator = GeneratorSubscriber.builder()
+        /*AsyncGenerator<? extends NodeOutput> generator = GeneratorSubscriber.builder()
                 .startingNode("expanderllmstream")
                 .startingState(state)
                 .mapResult(response -> {
                     String text = response.getResult().getOutput().getText();
                     List<String> queryVariants = Arrays.asList(text.split("\n"));
                     return Map.of("expandercontent", queryVariants);
-                }).build(chatResponseFlux);
+                }).build(chatResponseFlux);*/
+        AsyncGenerator<? extends NodeOutput> generator = null;
         return Map.of("expandercontent", generator);
     }
 }

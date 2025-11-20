@@ -36,7 +36,7 @@ public class GraphStreamController {
         this.compiledGraph = stateGraph.compile();
     }
 
-    @GetMapping(value = "/expand", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    /*@GetMapping(value = "/expand", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> expand(@RequestParam(value = "query", defaultValue = "你好，很高兴认识你，能简单介绍一下自己吗？", required = false) String query,
                                                 @RequestParam(value = "expandernumber", defaultValue = "3", required = false) Integer  expanderNumber,
                                                 @RequestParam(value = "threadid", defaultValue = "yingzi", required = false) String threadId) throws GraphRunnerException {
@@ -53,7 +53,7 @@ public class GraphStreamController {
         return sink.asFlux()
                 .doOnCancel(() -> logger.info("Client disconnected from stream"))
                 .doOnError(e -> logger.error("Error occurred during streaming", e));
-    }
+    }*/
 
 
 }
