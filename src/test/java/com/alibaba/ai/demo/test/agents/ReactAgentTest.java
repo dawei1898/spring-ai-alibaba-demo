@@ -148,7 +148,7 @@ public class ReactAgentTest {
         ToolCallback searchTool = FunctionToolCallback
                 .builder("search", new SearchTool())
                 .description("搜索工具")
-                .inputType(Map.class)
+                .inputType(String.class)
                 .build();
 
         ReactAgent reactAgent = ReactAgent.builder()
