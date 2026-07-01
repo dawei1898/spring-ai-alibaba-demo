@@ -129,12 +129,12 @@ public class ChatMemoryTest {
 
         MessageChatMemoryAdvisor messageChatMemoryAdvisor = MessageChatMemoryAdvisor
                 .builder(chatMemory)
-                .conversationId(chatId)
                 .build();
 
         String content3 = chatClient.prompt(message3)
                 .options(chatOptions)
                 .advisors(messageChatMemoryAdvisor, customLoggerAdvisor)
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, chatId))
                 .call()
                 .content();
         System.out.println("【回答3】: " + content3);

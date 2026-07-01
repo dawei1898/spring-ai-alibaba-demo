@@ -66,7 +66,7 @@ public class RAGTest {
                 .build();
 
         // 添加QuestionAnswerAdvisor并提供对应的向量存储，可以将之前放入的文档作为参考资料，并生成增强回答。
-        QuestionAnswerAdvisor questionAnswerAdvisor = new QuestionAnswerAdvisor(vectorStore);
+        QuestionAnswerAdvisor questionAnswerAdvisor = QuestionAnswerAdvisor.builder(vectorStore).build();
 
         String content = chatClient.prompt(message)
                 .options(chatOptions)

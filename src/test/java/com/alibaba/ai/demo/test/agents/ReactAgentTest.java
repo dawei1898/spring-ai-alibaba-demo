@@ -118,7 +118,9 @@ public class ReactAgentTest {
         flux.subscribe(nodeOutput -> {
             System.out.println("【response】 = " + nodeOutput);
             if (nodeOutput instanceof StreamingOutput streamingOutput) {
-                System.out.println("【回答中】 = " + streamingOutput.message().getText());
+                if (streamingOutput.message() != null) {
+                    System.out.println("【回答中】 = " + streamingOutput.message().getText());
+                }
             }
             if ("__END__".equalsIgnoreCase(nodeOutput.node())) {
                 try {

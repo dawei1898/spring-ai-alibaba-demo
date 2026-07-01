@@ -111,18 +111,20 @@ public class ReactAgentService {
                             Map<String, String> map = new HashMap<>();
                             // 回答中
                             if (nodeOutput instanceof StreamingOutput streamingOutput) {
-                                log.info("【回答中】 = " + streamingOutput.message().getText());
-                                // 思考
-                                Object reasoningContentObj = streamingOutput.message().getMetadata().get("reasoningContent");
-                                if (reasoningContentObj instanceof String reasoningContent) {
-                                    if (StringUtils.isNotEmpty(reasoningContent)) {
-                                        map.put("reasoningContent", reasoningContent);
+                                if (streamingOutput.message() != null) {
+                                    log.info("【回答中】 = " + streamingOutput.message().getText());
+                                    // 思考
+                                    Object reasoningContentObj = streamingOutput.message().getMetadata().get("reasoningContent");
+                                    if (reasoningContentObj instanceof String reasoningContent) {
+                                        if (StringUtils.isNotEmpty(reasoningContent)) {
+                                            map.put("reasoningContent", reasoningContent);
+                                        }
                                     }
-                                }
-                                // 回答
-                                String text = streamingOutput.message().getText();
-                                if (StringUtils.isNotEmpty(text)) {
-                                    map.put("content", text);
+                                    // 回答
+                                    String text = streamingOutput.message().getText();
+                                    if (StringUtils.isNotEmpty(text)) {
+                                        map.put("content", text);
+                                    }
                                 }
                             }
                             // 回答结束

@@ -39,8 +39,8 @@ public class BailianAgentTest {
         //String message = "深圳今天的天气怎么样？";
         String message = "深圳今天的新闻？";
 
-        DashScopeAgentApi dashScopeAgentApi = new DashScopeAgentApi(apiKey);
-        DashScopeAgent dashScopeAgent = new DashScopeAgent(dashScopeAgentApi);
+        DashScopeAgentApi dashScopeAgentApi = DashScopeAgentApi.builder().apiKey(apiKey).build();
+        DashScopeAgent dashScopeAgent = new DashScopeAgent(dashScopeAgentApi, new DashScopeAgentOptions());
         DashScopeAgentOptions dashScopeAgentOptions = DashScopeAgentOptions
                 .builder().withAppId(search_agent_app_id).build();
         Prompt prompt = new Prompt(message, dashScopeAgentOptions);
@@ -63,8 +63,8 @@ public class BailianAgentTest {
         String message = "深圳今天的新闻？";
         System.out.println("【提问】= " + message);
 
-        DashScopeAgentApi dashScopeAgentApi = new DashScopeAgentApi(apiKey);
-        DashScopeAgent dashScopeAgent = new DashScopeAgent(dashScopeAgentApi);
+        DashScopeAgentApi dashScopeAgentApi = DashScopeAgentApi.builder().apiKey(apiKey).build();
+        DashScopeAgent dashScopeAgent = new DashScopeAgent(dashScopeAgentApi, new DashScopeAgentOptions());
         DashScopeAgentOptions dashScopeAgentOptions = DashScopeAgentOptions
                 .builder()
                 .withAppId(search_agent_app_id)

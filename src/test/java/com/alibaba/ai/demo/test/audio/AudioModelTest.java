@@ -1,14 +1,16 @@
 package com.alibaba.ai.demo.test.audio;
 
 
-import com.alibaba.cloud.ai.dashscope.audio.DashScopeAudioTranscriptionOptions;
-import com.alibaba.cloud.ai.dashscope.audio.DashScopeAudioSpeechOptions;
-import com.alibaba.cloud.ai.dashscope.audio.synthesis.SpeechSynthesisModel;
-import com.alibaba.cloud.ai.dashscope.audio.synthesis.SpeechSynthesisPrompt;
-import com.alibaba.cloud.ai.dashscope.audio.synthesis.SpeechSynthesisResponse;
+
+
 import com.alibaba.cloud.ai.dashscope.audio.transcription.AudioTranscriptionModel;
+import com.alibaba.cloud.ai.dashscope.audio.transcription.DashScopeAudioTranscriptionOptions;
+import com.alibaba.cloud.ai.dashscope.audio.tts.DashScopeAudioSpeechModel;
+import com.alibaba.cloud.ai.dashscope.audio.tts.DashScopeAudioSpeechOptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.audio.transcription.AudioTranscriptionPrompt;
+import org.springframework.ai.audio.tts.TextToSpeechPrompt;
+import org.springframework.ai.audio.tts.TextToSpeechResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.UrlResource;
@@ -42,7 +44,7 @@ public class AudioModelTest {
 
 
     @Autowired
-    private SpeechSynthesisModel speechSynthesisModel;
+    private DashScopeAudioSpeechModel dashScopeAudioSpeechModel;
 
     @Autowired
     private AudioTranscriptionModel audioTranscriptionModel;
@@ -69,15 +71,14 @@ public class AudioModelTest {
                 .voice("longyingda") // 音色人物：longyingcui（男）、longyingda（女）
                 .build();
 
-        SpeechSynthesisPrompt speechSynthesisPrompt =
-                new SpeechSynthesisPrompt(message, speechSynthesisOptions);
+        TextToSpeechPrompt speechSynthesisPrompt =
+                new TextToSpeechPrompt(message, speechSynthesisOptions);
 
         // 保存音频文件
         File file = new File(FILE_PATH + "/" + System.currentTimeMillis() + "_output.mp3");
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            ByteBuffer byteBuffer = speechSynthesisModel.call(speechSynthesisPrompt)
-                    .getResult().getOutput().getAudio();
-            fos.write(byteBuffer.array());
+            byte[] output = dashScopeAudioSpeechModel.call(speechSynthesisPrompt).getResult().getOutput();
+            fos.write(output);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,10 +104,10 @@ public class AudioModelTest {
                 //.responseFormat(DashScopeSpeechSynthesisApi.ResponseFormat.MP3)
                 .build();
 
-        SpeechSynthesisPrompt speechSynthesisPrompt =
-                new SpeechSynthesisPrompt(message, speechSynthesisOptions);
+        TextToSpeechPrompt speechSynthesisPrompt =
+                new TextToSpeechPrompt(message, speechSynthesisOptions);
 
-        Flux<SpeechSynthesisResponse> responseFlux = speechSynthesisModel.stream(speechSynthesisPrompt);
+        Flux<TextToSpeechResponse> responseFlux = dashScopeAudioSpeechModel.stream(speechSynthesisPrompt);
 
 
         // 保存音频文件
@@ -116,9 +117,7 @@ public class AudioModelTest {
 
             responseFlux.doFinally(signalType -> latch.countDown())
                     .subscribe(r -> {
-                        ByteBuffer byteBuffer = r.getResult().getOutput().getAudio();
-                        byte[] bytes = new byte[byteBuffer.remaining()];
-                        byteBuffer.get(bytes);
+                        byte[] bytes = r.getResult().getOutput();
                         try {
                             fos.write(bytes);
                         } catch (IOException e) {
@@ -142,7 +141,7 @@ public class AudioModelTest {
 
         DashScopeAudioTranscriptionOptions transcriptionOptions =
                 DashScopeAudioTranscriptionOptions.builder()
-                        .withModel(MODEL_SENSEVOICE_V1)
+                        .model(MODEL_SENSEVOICE_V1)
                         .build();
 
         AudioTranscriptionPrompt prompt = new AudioTranscriptionPrompt
