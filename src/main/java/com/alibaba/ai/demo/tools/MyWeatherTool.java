@@ -13,7 +13,7 @@ import java.util.function.Function;
  * @author dawei
  */
 @Configuration(proxyBeanMethods = false)
-public class MyWeatherTools {
+public class MyWeatherTool {
 
 
     MyWeatherService myWeatherService  = new MyWeatherService();
